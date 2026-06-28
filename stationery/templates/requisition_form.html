@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stationery Requisition</title>
+</head>
+<body>
+
+    {% if success %}
+    <script>
+        alert("Request submitted successfully.");
+    </script>
+    {% endif %}
+
+    {% if form.errors %}
+    <script>
+        alert("Requested quantity exceeds available stock.");
+    </script>
+    {% endif %}
+
+    <h1>Stationery Request Form</h1>
+
+    <form method="post" action="/accounts/logout/">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
+
+    <br>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit">Submit Request</button>
+    </form>
+
+</body>
+</html>

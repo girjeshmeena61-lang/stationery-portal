@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+
+    <h1>Stationery Dashboard</h1>
+
+    <a href="/">New Request</a> |
+    <a href="/status/">My Requests</a> |
+    <a href="/dashboard/">Dashboard</a>
+
+    <form method="post" action="/accounts/logout/" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
+
+    <hr>
+
+    <h3>Total Requests: {{ total_requests }}</h3>
+    <h3>Pending Requests: {{ pending_requests }}</h3>
+    <h3>Approved Requests: {{ approved_requests }}</h3>
+    <h3>Rejected Requests: {{ rejected_requests }}</h3>
+
+    <h3>Low Stock Items: {{ low_stock_count }}</h3>
+
+    <h2>Items requiring replenishment</h2>
+
+    <ul>
+        {% for item in low_stock_items %}
+            <li>
+                {{ item.item_name }}
+                (Available: {{ item.available_qty }},
+                Minimum: {{ item.minimum_qty }})
+            </li>
+        {% empty %}
+            <li>No low stock items.</li>
+        {% endfor %}
+    </ul>
+
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Requests</title>
+</head>
+<body>
+
+<h1>My Stationery Requests</h1>
+
+<a href="/">New Request</a> |
+<a href="/status/">My Requests</a> |
+<a href="/dashboard/">Dashboard</a>
+
+<form method="post" action="/accounts/logout/" style="display:inline;">
+    {% csrf_token %}
+    <button type="submit">Logout</button>
+</form>
+
+<hr>
+
+<form method="get">
+
+    Department:
+    <select name="department">
+        <option value="">All</option>
+        <option value="HR">HR</option>
+        <option value="Finance">Finance</option>
+        <option value="IT">IT</option>
+        <option value="Admin">Admin</option>
+        <option value="Operations">Operations</option>
+    </select>
+
+    Status:
+    <select name="status">
+        <option value="">All</option>
+        <option value="Pending">Pending</option>
+        <option value="Approved">Approved</option>
+        <option value="Rejected">Rejected</option>
+        <option value="Partial">Partial Approved</option>
+    </select>
+
+    <button type="submit">Filter</button>
+
+</form>
+
+<br><br>
+
+<table border="1" cellpadding="10">
+
+    <tr>
+        <th>Department</th>
+        <th>Item</th>
+        <th>Requested Qty</th>
+        <th>Approved Qty</th>
+        <th>Status</th>
+        <th>Request Date</th>
+    </tr>
+
+    {% for request in requests %}
+    <tr>
+        <td>{{ request.department }}</td>
+        <td>{{ request.item }}</td>
+        <td>{{ request.requested_qty }}</td>
+        <td>{{ request.approved_qty }}</td>
+        <td>{{ request.status }}</td>
+        <td>{{ request.created_at }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="6">No requests found.</td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+</body>
+</html>
