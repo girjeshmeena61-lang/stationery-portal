@@ -1,18 +1,8 @@
-from django.contrib import admin
-from django.urls import path, include
-from stationery.views import CustomLoginView
+from django.urls import path
+from . import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-
-    path('accounts/login/', CustomLoginView.as_view(), name='login'),
-
-    path('accounts/', include('django.contrib.auth.urls')),
-
-    path('', include('stationery.urls')),
-]
-from .views import custom_login
-
-urlpatterns = [
-    path('accounts/login/', custom_login, name='login'),
+    path('', views.requisition_form, name='requisition_form'),
+    path('status/', views.request_status, name='request_status'),
+    path('dashboard/', views.dashboard, name='dashboard'),
 ]
