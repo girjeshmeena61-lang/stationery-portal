@@ -1,18 +1,102 @@
 <!DOCTYPE html>
+
 <html>
 <head>
-    <title>Employee Login</title>
+    <title>Stationery Portal Login</title>
+
+```
+<style>
+    body{
+        margin:0;
+        padding:0;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg,#667eea,#764ba2);
+        height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+    }
+
+    .login-box{
+        background:white;
+        padding:40px;
+        width:400px;
+        border-radius:15px;
+        box-shadow:0 8px 25px rgba(0,0,0,0.2);
+        text-align:center;
+    }
+
+    h1{
+        margin-bottom:10px;
+        color:#333;
+    }
+
+    p{
+        color:#777;
+        margin-bottom:30px;
+    }
+
+    input{
+        width:100%;
+        padding:12px;
+        margin-top:10px;
+        margin-bottom:20px;
+        border:1px solid #ccc;
+        border-radius:8px;
+        box-sizing:border-box;
+        font-size:14px;
+    }
+
+    button{
+        width:100%;
+        padding:12px;
+        background:#667eea;
+        color:white;
+        border:none;
+        border-radius:8px;
+        font-size:16px;
+        cursor:pointer;
+        font-weight:bold;
+    }
+
+    button:hover{
+        background:#5563d6;
+    }
+
+    .errorlist{
+        color:red;
+        list-style:none;
+        padding:0;
+        margin-bottom:15px;
+    }
+</style>
+```
+
 </head>
+
 <body>
 
-<h1>Employee Login</h1>
+<div class="login-box">
+
+```
+<h1>E-Stationery Portal</h1>
+
+<p>Please login to continue</p>
 
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+
+    {{ form.username.label_tag }}
+    {{ form.username }}
+
+    {{ form.password.label_tag }}
+    {{ form.password }}
 
     <button type="submit">Login</button>
 </form>
+```
+
+</div>
 
 </body>
 </html>
