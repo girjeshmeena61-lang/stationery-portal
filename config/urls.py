@@ -1,12 +1,13 @@
 from django.contrib import admin
 from django.urls import path, include
+from stationery.views import custom_login
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    # Keep Django logout functionality
-    path('accounts/logout/', include('django.contrib.auth.urls')),
+    path('accounts/login/', custom_login, name='login'),
 
-    # Your app URLs
+    path('accounts/', include('django.contrib.auth.urls')),
+
     path('', include('stationery.urls')),
 ]
