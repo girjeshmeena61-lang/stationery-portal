@@ -7,18 +7,17 @@
 
     <style>
         body{
-            background: linear-gradient(135deg,#4facfe,#00f2fe);
+            background: linear-gradient(135deg,#667eea,#764ba2);
             height:100vh;
         }
 
         .login-card{
-            max-width:450px;
+            max-width:500px;
             margin:auto;
             margin-top:100px;
-            border-radius:20px;
+            border-radius:15px;
         }
     </style>
-
 </head>
 
 <body>
@@ -33,61 +32,44 @@
 
         <div class="card-body p-4">
 
-            <h5 class="text-center mb-4">
-                Login as Employee or Administrator
-            </h5>
+            <h4 class="text-center mb-4">
+                Login
+            </h4>
 
-            {% if form.errors %}
+            {% if error %}
             <div class="alert alert-danger">
-                Invalid username or password.
+                {{ error }}
             </div>
             {% endif %}
 
             <form method="post">
+
                 {% csrf_token %}
 
                 <div class="mb-3">
-                    <label class="form-label">
-                        Username
-                    </label>
-                    {{ form.username }}
+                    <label class="form-label">Login As</label>
+                    <select name="role" class="form-select" required>
+                        <option value="">Select Role</option>
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">
-                        Password
-                    </label>
-                    {{ form.password }}
+                    <label class="form-label">Username</label>
+                    <input type="text" name="username" class="form-control" required>
                 </div>
 
-                <button class="btn btn-primary w-100" type="submit">
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+
+                <button class="btn btn-primary w-100">
                     Login
                 </button>
+
             </form>
-
-            <hr>
-
-            <div class="text-center">
-
-                <span class="badge bg-danger">
-                    Admin
-                </span>
-
-                <small>
-                    Redirected to Admin Dashboard
-                </small>
-
-                <br><br>
-
-                <span class="badge bg-success">
-                    Employee
-                </span>
-
-                <small>
-                    Redirected to Stationery Portal
-                </small>
-
-            </div>
 
         </div>
 

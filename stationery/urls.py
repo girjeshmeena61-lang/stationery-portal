@@ -11,3 +11,8 @@ urlpatterns = [
 
     path('', include('stationery.urls')),
 ]
+from .views import custom_login
+
+urlpatterns = [
+    path('accounts/login/', custom_login, name='login'),
+]
