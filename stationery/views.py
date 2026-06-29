@@ -1,8 +1,10 @@
 from django.shortcuts import render
+from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
 from django.db.models import F
 from django.http import HttpResponse
 from openpyxl import Workbook
+
 
 from .forms import RequisitionForm
 from .models import Requisition, Inventory
@@ -140,3 +142,10 @@ def export_excel(request):
     workbook.save(response)
 
     return response
+    class CustomLoginView(LoginView):
+    template_name = 'registration/login.html'
+
+    def get_success_url(self):
+        if self.request.user.is_staff:
+            return '/admin/'
+        return '/'
