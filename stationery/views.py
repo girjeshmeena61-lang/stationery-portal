@@ -29,4 +29,4 @@ def custom_login(request):
         else:
             error = "Invalid username or password."
 
-    return HttpResponse("CUSTOM LOGIN VIEW WORKING")
+    return render(request, "registration/login.html", {"error": error})
