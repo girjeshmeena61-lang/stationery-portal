@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 
@@ -28,4 +29,4 @@ def custom_login(request):
         else:
             error = "Invalid username or password."
 
-    return render(request, "registration/login.html", {"error": error})
+    return HttpResponse("CUSTOM LOGIN VIEW WORKING")
