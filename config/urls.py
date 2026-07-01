@@ -1,13 +1,15 @@
-from django.contrib import admin
-from django.urls import path, include
-from stationery.views import custom_login
+from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('accounts/login/', custom_login, name='login'),
 
-    path('accounts/', include('django.contrib.auth.urls')),
+    path(
+        'accounts/logout/',
+        LogoutView.as_view(),
+        name='logout'
+    ),
 
     path('', include('stationery.urls')),
 ]
