@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.db.models import F
 from django.http import HttpResponse
@@ -140,8 +141,6 @@ def export_excel(request):
     workbook.save(response)
 
     return response
-    from django.contrib.auth import authenticate, login
-from django.shortcuts import redirect
 
 def custom_login(request):
     error = ""
