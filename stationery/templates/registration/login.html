@@ -14,51 +14,51 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            min-height:100vh;
+            min-height: 100vh;
         }
 
         .ioc-logo{
-            position:absolute;
-            top:20px;
-            left:30px;
-            height:80px;
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            height: 80px;
         }
 
         .header{
-            text-align:center;
-            padding-top:30px;
-            margin-bottom:40px;
+            text-align: center;
+            padding-top: 30px;
+            margin-bottom: 40px;
         }
 
         .header h2{
-            color:#003b8e;
-            font-weight:bold;
-            margin-bottom:5px;
+            color: #003b8e;
+            font-weight: bold;
+            margin-bottom: 5px;
         }
 
         .header h1{
-            color:#003b8e;
-            font-weight:bold;
+            color: #003b8e;
+            font-weight: bold;
         }
 
         .login-card{
-            max-width:500px;
-            margin:auto;
-            background:rgba(255,255,255,0.95);
-            border-radius:15px;
-            padding:30px;
-            box-shadow:0 8px 20px rgba(0,0,0,0.25);
+            max-width: 500px;
+            margin: auto;
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
         }
 
         .btn-login{
-            background:#4da6ff;
-            color:white;
-            width:100%;
+            background: #4da6ff;
+            color: white;
+            width: 100%;
         }
 
         .btn-login:hover{
-            background:#3399ff;
-            color:white;
+            background: #3399ff;
+            color: white;
         }
 
     </style>
@@ -67,58 +67,56 @@
 
 <body>
 
-<img src="{% static 'images/iocl_logo.png' %}"
-     class="ioc-logo">
+    <img src="{% static 'images/iocl_logo.png' %}" class="ioc-logo">
 
-<div class="header">
-    <h2>Rajasthan State Office</h2>
-    <h1>e-Stationery Portal</h1>
-</div>
-
-<div class="login-card">
-
-    {% if error %}
-    <div class="alert alert-danger">
-        {{ error }}
+    <div class="header">
+        <h2>Rajasthan State Office</h2>
+        <h1>e-Stationery Portal</h1>
     </div>
-    {% endif %}
 
-    <form method="post">
-        {% csrf_token %}
+    <div class="login-card">
 
-        <div class="mb-3">
-            <label>Login As</label>
-            <select name="role" class="form-select" required>
-                <option value="">Select Role</option>
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-            </select>
+        {% if error %}
+        <div class="alert alert-danger">
+            {{ error }}
         </div>
+        {% endif %}
 
-        <div class="mb-3">
-            <label>Username</label>
-            <input type="text"
-                   name="username"
-                   class="form-control"
-                   required>
-        </div>
+        <form method="post">
+            {% csrf_token %}
 
-        <div class="mb-3">
-            <label>Password</label>
-            <input type="password"
-                   name="password"
-                   class="form-control"
-                   required>
-        </div>
+            <div class="mb-3">
+                <label>Login As</label>
+                <select name="role" class="form-select" required>
+                    <option value="">Select Role</option>
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
 
-        <button type="submit"
-                class="btn btn-login">
-            Login
-        </button>
+            <div class="mb-3">
+                <label>Username</label>
+                <input type="text"
+                       name="username"
+                       class="form-control"
+                       required>
+            </div>
 
-    </form>
+            <div class="mb-3">
+                <label>Password</label>
+                <input type="password"
+                       name="password"
+                       class="form-control"
+                       required>
+            </div>
 
-</div>
+            <button type="submit" class="btn btn-login">
+                Login
+            </button>
+
+        </form>
+
+    </div>
 
 </body>
 </html>
