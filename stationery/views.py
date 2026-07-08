@@ -10,14 +10,52 @@ from .models import Requisition, Inventory
 
 
 @login_required
+from django.contrib import messages
+
+@login_required
 def create_requisition(request):
     if request.method == 'POST':
         form = RequisitionForm(request.POST)
 
         if form.is_valid():
+
             requisition = form.save(commit=False)
+
+            inventory = requisition.item
+            qty = requisition.requested_qty
+
+            # Quantity must be greater than zero
+            if qty <= 0:
+                messages.error(request, "Quantity must be greater than zero.")
+                return render(request, 'requisition_form.html', {'form': form})
+
+            # No stock available
+            if inventory.available_qty == 0:
+                messages.error(request, f"{inventory.item_name} is currently out of stock.")
+                return render(request, 'requisition_form.html', {'form': form})
+
+            # Requested quantity exceeds stock
+            if qty > inventory.available_qty:
+                messages.error(
+                    request,
+                    f"Requested quantity ({qty}) exceeds available stock ({inventory.available_qty})."
+                )
+                return render(request, 'requisition_form.html', {'form': form})
+
+            # Minimum stock check
+            remaining_stock = inventory.available_qty - qty
+
+            if remaining_stock < inventory.minimum_qty:
+                messages.warning(
+                    request,
+                    f"Request cannot be submitted. Remaining stock will become {remaining_stock}, which is below the minimum stock level ({inventory.minimum_qty})."
+                )
+                return render(request, 'requisition_form.html', {'form': form})
+
             requisition.requested_by = request.user.username
             requisition.save()
+
+            messages.success(request, "Request submitted successfully.")
 
             return render(
                 request,
@@ -27,6 +65,7 @@ def create_requisition(request):
                     'success': True
                 }
             )
+
     else:
         form = RequisitionForm()
 
@@ -37,135 +76,3 @@ def create_requisition(request):
             'form': form
         }
     )
-
-
-@login_required
-def view_requests(request):
-    requests = Requisition.objects.filter(
-        requested_by=request.user.username
-    )
-
-    status = request.GET.get('status')
-    department = request.GET.get('department')
-
-    if status:
-        requests = requests.filter(status=status)
-
-    if department:
-        requests = requests.filter(department=department)
-
-    requests = requests.order_by('-created_at')
-
-    return render(
-        request,
-        'request_status.html',
-        {
-            'requests': requests
-        }
-    )
-
-
-@login_required
-def dashboard(request):
-    total_requests = Requisition.objects.count()
-
-    pending_requests = Requisition.objects.filter(
-        status='Pending'
-    ).count()
-
-    approved_requests = Requisition.objects.filter(
-        status='Approved'
-    ).count()
-
-    rejected_requests = Requisition.objects.filter(
-        status='Rejected'
-    ).count()
-
-    low_stock_items = Inventory.objects.filter(
-        available_qty__lte=F('minimum_qty')
-    )
-
-    low_stock_count = low_stock_items.count()
-
-    return render(
-        request,
-        'dashboard.html',
-        {
-            'total_requests': total_requests,
-            'pending_requests': pending_requests,
-            'approved_requests': approved_requests,
-            'rejected_requests': rejected_requests,
-            'low_stock_items': low_stock_items,
-            'low_stock_count': low_stock_count,
-        }
-    )
-
-
-@login_required
-def export_excel(request):
-    workbook = Workbook()
-    worksheet = workbook.active
-    worksheet.title = "Stationery Requests"
-
-    worksheet.append([
-        'Department',
-        'Employee',
-        'Item',
-        'Requested Quantity',
-        'Approved Quantity',
-        'Status',
-        'Request Date'
-    ])
-
-    requisitions = Requisition.objects.all().order_by('-created_at')
-
-    for req in requisitions:
-        worksheet.append([
-            req.department,
-            req.requested_by,
-            req.item.item_name,
-            req.requested_qty,
-            req.approved_qty,
-            req.status,
-            req.created_at.strftime('%d-%m-%Y %H:%M')
-        ])
-
-    response = HttpResponse(
-        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    )
-
-    response[
-        'Content-Disposition'
-    ] = 'attachment; filename=stationery_report.xlsx'
-
-    workbook.save(response)
-
-    return response
-
-def custom_login(request):
-    error = ""
-
-    if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
-        role = request.POST.get("role")
-
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
-            if role == "admin" and not user.is_staff:
-                error = "This account is not an Admin account."
-            elif role == "user" and user.is_staff:
-                error = "Please select Admin for this account."
-            else:
-                login(request, user)
-
-                if user.is_staff:
-                    return redirect("/admin/")
-                else:
-                    return redirect("/")
-
-        else:
-            error = "Invalid username or password."
-
-    return render(request, "registration/login.html", {"error": error})

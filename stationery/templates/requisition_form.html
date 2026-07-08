@@ -28,16 +28,43 @@
             <div class="card-body">
 
                 {% if success %}
-                    <div class="alert alert-success">
-                        Request submitted successfully.
-                    </div>
-                {% endif %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        Request submitted successfully.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+{% endif %}
 
-                {% if form.errors %}
-                    <div class="alert alert-danger">
-                        Please check the entered details.
-                    </div>
-                {% endif %}
+{% if messages %}
+    {% for message in messages %}
+
+        {% if message.tags == 'success' %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+        {% elif message.tags == 'error' %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+        {% elif message.tags == 'warning' %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+        {% else %}
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+        {% endif %}
+
+    {% endfor %}
+{% endif %}
 
                 <div class="mb-3">
                     <a href="/dashboard/" class="btn btn-secondary">Dashboard</a>
