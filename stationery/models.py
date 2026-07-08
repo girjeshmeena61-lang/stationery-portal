@@ -22,15 +22,25 @@ class Requisition(models.Model):
 
     DEPARTMENT_CHOICES = [
         ('HR', 'HR'),
+        ('Retail Sales', 'Retail Sales'),
+        ('IB', 'IB'),
+        ('Automation', 'Automation'),
+        ('Camp CO-IS', 'Camp CO-IS'),
+        ('Coordination', 'Coordination'),
+        ('ED/CGM', 'ED/CGM'),
+        ('Engineering', 'Engineering'),
+        ('LPG', 'LPG'),
+        ('Law', 'Law'),
+        ('Lubes', 'Lubes'),
         ('Finance', 'Finance'),
-        ('IT', 'IT'),
+        ('IS', 'IS'),
         ('Admin', 'Admin'),
         ('Operations', 'Operations'),
     ]
 
     item = models.ForeignKey(Inventory, on_delete=models.CASCADE)
-    requested_qty = models.IntegerField()
-    approved_qty = models.IntegerField(default=0)
+    requested_qty = models.PositiveIntegerField()
+approved_qty = models.PositiveIntegerField(default=0)
     reason = models.TextField()
 
     status = models.CharField(
