@@ -1,6 +1,5 @@
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+
 
 class Inventory(models.Model):
     item_name = models.CharField(max_length=100)
@@ -21,26 +20,32 @@ class Requisition(models.Model):
     ]
 
     DEPARTMENT_CHOICES = [
-        ('HR', 'HR'),
-        ('Retail Sales', 'Retail Sales'),
-        ('IB', 'IB'),
-        ('Automation', 'Automation'),
-        ('Camp CO-IS', 'Camp CO-IS'),
-        ('Coordination', 'Coordination'),
-        ('ED/CGM', 'ED/CGM'),
-        ('Engineering', 'Engineering'),
-        ('LPG', 'LPG'),
-        ('Law', 'Law'),
-        ('Lubes', 'Lubes'),
-        ('Finance', 'Finance'),
-        ('IS', 'IS'),
-        ('Admin', 'Admin'),
-        ('Operations', 'Operations'),
+        ("HR", "HR"),
+        ("Retail Sales", "Retail Sales"),
+        ("IB", "IB"),
+        ("Automation", "Automation"),
+        ("Camp CO-IS", "Camp CO-IS"),
+        ("Coordination", "Coordination"),
+        ("ED/CGM", "ED/CGM"),
+        ("Engineering", "Engineering"),
+        ("LPG", "LPG"),
+        ("Law", "Law"),
+        ("Lubes", "Lubes"),
+        ("Finance", "Finance"),
+        ("IS", "IS"),
+        ("Admin", "Admin"),
+        ("Operations", "Operations"),
     ]
+
+    department = models.CharField(
+        max_length=50,
+        choices=DEPARTMENT_CHOICES,
+        default="HR",
+    )
 
     item = models.ForeignKey(Inventory, on_delete=models.CASCADE)
     requested_qty = models.PositiveIntegerField()
-approved_qty = models.PositiveIntegerField(default=0)
+    approved_qty = models.PositiveIntegerField(default=0)
     reason = models.TextField()
 
     status = models.CharField(
@@ -50,12 +55,6 @@ approved_qty = models.PositiveIntegerField(default=0)
     )
 
     requested_by = models.CharField(max_length=100)
-
-    department = models.CharField(
-        max_length=20,
-        choices=DEPARTMENT_CHOICES,
-        default='HR'
-    )
 
     created_at = models.DateTimeField(auto_now_add=True)
 
