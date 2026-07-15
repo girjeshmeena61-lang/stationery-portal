@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse
+from django.db.models import F
 from openpyxl import Workbook
 
 from .forms import RequisitionForm
@@ -11,33 +12,27 @@ from .models import Requisition, Inventory
 
 
 def custom_login(request):
-    """
-    Login page for both Employee and Admin.
-    """
-
     if request.user.is_authenticated:
         return redirect("create_requisition")
 
     if request.method == "POST":
-
         form = AuthenticationForm(request, data=request.POST)
 
         if form.is_valid():
-
             username = form.cleaned_data["username"]
             password = form.cleaned_data["password"]
 
             user = authenticate(
                 request,
                 username=username,
-                password=password
+                password=password,
             )
 
             if user is not None:
                 login(request, user)
 
                 if user.is_staff:
-                    return redirect("/admin/")
+                    return redirect("dashboard")
 
                 return redirect("create_requisition")
 
@@ -49,9 +44,7 @@ def custom_login(request):
     return render(
         request,
         "registration/login.html",
-        {
-            "form": form
-        }
+        {"form": form},
     )
 
 
@@ -65,9 +58,7 @@ def create_requisition(request):
         if form.is_valid():
 
             requisition = form.save(commit=False)
-
             requisition.requested_by = request.user.username
-
             requisition.save()
 
             messages.success(
@@ -75,35 +66,33 @@ def create_requisition(request):
                 "Request submitted successfully."
             )
 
-            return render(
-                request,
-                "requisition_form.html",
-                {
-                    "form": RequisitionForm(),
-                    "success": True,
-                },
-            )
+            return redirect("create_requisition")
 
         else:
 
-            return render(
-                request,
-                "requisition_form.html",
-                {
-                    "form": form,
-                },
-            )
+            for field in form:
+                for error in field.errors:
+                    messages.error(
+                        request,
+                        f"{field.label}: {error}"
+                    )
 
-    form = RequisitionForm()
+            for error in form.non_field_errors():
+                messages.error(request, error)
+
+    else:
+        form = RequisitionForm()
 
     return render(
         request,
         "requisition_form.html",
         {
-            "form": form,
-        },
+            "form": form
+        }
     )
-    @login_required
+
+
+@login_required
 def view_requests(request):
 
     requests = Requisition.objects.filter(
@@ -115,7 +104,7 @@ def view_requests(request):
         "request_status.html",
         {
             "requests": requests
-        },
+        }
     )
 
 
@@ -137,7 +126,7 @@ def dashboard(request):
     ).count()
 
     low_stock_items = Inventory.objects.filter(
-        available_qty__lte=0
+        available_qty__lte=F("minimum_qty")
     )
 
     low_stock_count = low_stock_items.count()
@@ -164,7 +153,6 @@ def export_excel(request):
     workbook = Workbook()
 
     worksheet = workbook.active
-
     worksheet.title = "Stationery Requests"
 
     headers = [
@@ -178,23 +166,21 @@ def export_excel(request):
         "Created At",
     ]
 
-    for column, header in enumerate(headers, start=1):
-        worksheet.cell(row=1, column=column).value = header
+    for col, header in enumerate(headers, start=1):
+        worksheet.cell(row=1, column=col).value = header
 
     row = 2
 
     for req in Requisition.objects.all().order_by("-created_at"):
 
         worksheet.cell(row=row, column=1).value = req.department
-        worksheet.cell(row=row, column=2).value = str(req.item)
+        worksheet.cell(row=row, column=2).value = req.item.item_name
         worksheet.cell(row=row, column=3).value = req.requested_by
         worksheet.cell(row=row, column=4).value = req.requested_qty
         worksheet.cell(row=row, column=5).value = req.approved_qty
         worksheet.cell(row=row, column=6).value = req.status
         worksheet.cell(row=row, column=7).value = req.reason
-        worksheet.cell(row=row, column=8).value = req.created_at.strftime(
-            "%d-%m-%Y %H:%M"
-        )
+        worksheet.cell(row=row, column=8).value = req.created_at.strftime("%d-%m-%Y %H:%M")
 
         row += 1
 
@@ -202,9 +188,9 @@ def export_excel(request):
         content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
 
-    response[
-        "Content-Disposition"
-    ] = 'attachment; filename="Stationery_Requests.xlsx"'
+    response["Content-Disposition"] = (
+        'attachment; filename="Stationery_Requests.xlsx"'
+    )
 
     workbook.save(response)
 
