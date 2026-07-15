@@ -35,7 +35,7 @@ ALLOWED_HOSTS = os.environ.get(
 ).split(",")
 
 
-# Application definition
+# Application definitiongit status
 
 INSTALLED_APPS = [
     'django.contrib.admin',
