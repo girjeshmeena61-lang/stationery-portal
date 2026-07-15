@@ -32,7 +32,7 @@ def custom_login(request):
                 login(request, user)
 
                 if user.is_staff:
-    return redirect("/admin/")
+                    return redirect("dashboard")
 
                 return redirect("create_requisition")
 
